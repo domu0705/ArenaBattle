@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "ArenaBattle.h"
+#include "GameFramework/RotatingMovementComponent.h"// 독립적인 회전 컴포넌트 
 #include "GameFramework/Actor.h"
 #include "Fountain.generated.h"
 
@@ -11,6 +12,7 @@ class ARENABATTLE_API AFountain : public AActor
 {
 	GENERATED_BODY()
 	
+
 public:	
 	// Sets default values for this actor's properties
 	AFountain();
@@ -18,6 +20,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void PostInitializeComponents() override;
 
 public:	
 	// Called every frame
@@ -32,4 +36,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		UParticleSystemComponent* Splash;
 
+
+	//독립적인 회전 컴포넌트 사용을 위함
+	UPROPERTY(VisibleAnywhere)
+		URotatingMovementComponent* Movement;
+private:
+	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))//Meta = (AllowPrivateAccess = true) 은 private에서도 편집 가능함과 동시에 변수 데이터를 은닉하게 하여 캡슐화 가능.
+		float RotateSpeed;
 };
