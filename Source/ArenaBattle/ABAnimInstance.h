@@ -26,7 +26,7 @@ public:
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	void PlayAttackMontage();
-
+	void SetDeadAnim() { IsDead = true; }
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))//BlueprintReadOnly = 블프에서는 오직 값을 읽기만 함. AllowPrivateAccess 111p설명
 		float CurrentPawnSpeed;
@@ -34,7 +34,8 @@ private:
 		bool IsInAir;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))//255p
 		UAnimMontage* AttackMontage;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+		bool IsDead;
 	UFUNCTION()
 		void AnimNotify_AttackHitCheck();
 

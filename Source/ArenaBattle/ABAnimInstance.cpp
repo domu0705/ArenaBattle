@@ -7,7 +7,7 @@ UABAnimInstance::UABAnimInstance()
 {
 	CurrentPawnSpeed = 0.0f; 
 	IsInAir = false;
-
+	IsDead = false;
 	//254p
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("/Game/Book/Animations/SK_Mannequin_Skeleton_Montage.SK_Mannequin_Skeleton_Montage"));
 	if (ATTACK_MONTAGE.Succeeded())
@@ -22,17 +22,20 @@ void UABAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	auto Pawn = TryGetPawnOwner(); //폰 객체가 존재하는지, 즉 유효한 폰인지를 먼저 검사
-	if (IsValid(Pawn))
+	if (!IsValid(Pawn))
+		return;
+	
+	if (!IsDead)
 	{
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
-	}
-
-	auto Character = Cast<ACharacter>(Pawn);
-	if (Character)
-	{
-		IsInAir = Character->GetMovementComponent()->IsFalling();//isfalling 외에도 다른 상태확인용 함수들 제공함 226p
+		auto Character = Cast<ACharacter>(Pawn);
+		if (Character)
+		{
+			IsInAir = Character->GetMovementComponent()->IsFalling();//isfalling 외에도 다른 상태확인용 함수들 제공함 226p
+		}
 	}
 }
+	
 
 void UABAnimInstance::PlayAttackMontage()
 {

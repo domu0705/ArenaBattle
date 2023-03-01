@@ -3,6 +3,7 @@
 
 #include "ABCharacter.h"
 #include "ABAnimInstance.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -40,6 +41,8 @@ AABCharacter::AABCharacter()
 
 	GetCharacterMovement()->JumpZVelocity = 800.0f;
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));//291p 내가 만든 콜리전 프리셋을 지정
+	AttackRange = 200.0f;
+	AttackRadius = 50.0f;
 
 }
 
@@ -121,6 +124,19 @@ void AABCharacter::SetControlMode(int32 ControlMode)
 	}
 }
 
+float AABCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	ABLOG(Warning, TEXT("Actor : %s took Damage : %f"), *GetName(), FinalDamage);
+
+	if (FinalDamage > 0.0f)
+	{
+		ABAnim->SetDeadAnim();
+		SetActorEnableCollision(false);
+	}
+	return FinalDamage;
+}
+
 void AABCharacter::Attack()
 {
 	if (IsAttacking) return;
@@ -141,7 +157,7 @@ void AABCharacter::AttackCheck()
 		ECollisionChannel::ECC_GameTraceChannel2,
 		FCollisionShape::MakeSphere(50.0f),
 		Params);
-	/*
+	
 #if ENABLE_DRAW_DEBUG
 
 	FVector TraceVec = GetActorForwardVector() * AttackRange;
@@ -161,13 +177,14 @@ void AABCharacter::AttackCheck()
 		DebugLifeTime);
 
 #endif
-	*/
+	
 	if (bResult)
 	{
 		if (HitResult.Actor.IsValid())
 		{
 			ABLOG(Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
 
+			//304p
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
 		}

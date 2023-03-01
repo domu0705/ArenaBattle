@@ -33,6 +33,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 	UPROPERTY(VisibleAnywhere, Category = Camera)//category는 UE에서 보이는 항목의 이름을 설정하는 것임.
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)//category는 UE에서 보이는 항목의 이름을 설정하는 것임.
@@ -42,6 +44,11 @@ private:
 		bool IsAttacking;
 	UPROPERTY()
 		class UABAnimInstance* ABAnim;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		float AttackRange;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		float AttackRadius;
 
 	void UpDown(float NewAxisValue);
 	void LeftRight(float NewAxisValue);
