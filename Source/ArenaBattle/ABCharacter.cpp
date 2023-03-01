@@ -39,6 +39,8 @@ AABCharacter::AABCharacter()
 	SetControlMode(0);
 
 	GetCharacterMovement()->JumpZVelocity = 800.0f;
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));//291p 내가 만든 콜리전 프리셋을 지정
+
 }
 
 void AABCharacter::PostInitializeComponents()//259p
@@ -47,6 +49,7 @@ void AABCharacter::PostInitializeComponents()//259p
 	ABAnim = Cast<UABAnimInstance>(GetMesh()->GetAnimInstance());
 
 	ABAnim->OnMontageEnded.AddDynamic(this, &AABCharacter::OnAttackMontageEnded);
+	ABAnim->OnAttackHitCheck.AddUObject(this, &AABCharacter::AttackCheck);
 }
 
 // Called when the game starts or when spawned
@@ -124,6 +127,51 @@ void AABCharacter::Attack()
 
 	ABAnim->PlayAttackMontage();
 	IsAttacking = true;
+}
+
+void AABCharacter::AttackCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * 200.0f,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(50.0f),
+		Params);
+	/*
+#if ENABLE_DRAW_DEBUG
+
+	FVector TraceVec = GetActorForwardVector() * AttackRange;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 5.0f;
+
+	DrawDebugCapsule(GetWorld(),
+		Center,
+		HalfHeight,
+		AttackRadius,
+		CapsuleRot,
+		DrawColor,
+		false,
+		DebugLifeTime);
+
+#endif
+	*/
+	if (bResult)
+	{
+		if (HitResult.Actor.IsValid())
+		{
+			ABLOG(Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
+
+			FDamageEvent DamageEvent;
+			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
+		}
+	}
 }
 
 

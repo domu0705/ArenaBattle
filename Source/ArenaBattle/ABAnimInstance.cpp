@@ -38,3 +38,13 @@ void UABAnimInstance::PlayAttackMontage()
 {
 	Montage_Play(AttackMontage, 1.0f);
 }
+
+void UABAnimInstance::AnimNotify_AttackHitCheck()
+{
+	OnAttackHitCheck.Broadcast();
+}
+
+void UABAnimInstance::AnimNotify_NextAttackCheck()
+{
+	OnNextAttackCheck.Broadcast();
+}

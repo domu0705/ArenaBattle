@@ -6,6 +6,9 @@
 #include "Animation/AnimInstance.h"
 #include "ABAnimInstance.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 /**
  * 
  */
@@ -17,6 +20,10 @@ class ARENABATTLE_API UABAnimInstance : public UAnimInstance
 
 public:
 	UABAnimInstance();
+	
+	FOnNextAttackCheckDelegate OnNextAttackCheck;
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
+
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	void PlayAttackMontage();
 
@@ -27,4 +34,10 @@ private:
 		bool IsInAir;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))//255p
 		UAnimMontage* AttackMontage;
+
+	UFUNCTION()
+		void AnimNotify_AttackHitCheck();
+
+	UFUNCTION()
+		void AnimNotify_NextAttackCheck();
 };
