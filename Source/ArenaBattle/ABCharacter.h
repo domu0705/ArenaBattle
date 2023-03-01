@@ -39,6 +39,8 @@ public:
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)//category는 UE에서 보이는 항목의 이름을 설정하는 것임.
 		UCameraComponent* Camera;
+	UPROPERTY(VisibleAnywhere, Category = Weapon)//category는 UE에서 보이는 항목의 이름을 설정하는 것임.
+		USkeletalMeshComponent* Weapon;
 private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		bool IsAttacking;
